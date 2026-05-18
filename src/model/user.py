@@ -1,10 +1,20 @@
-from src.repo.database import db
+from src.repo.database import Database
 from sqlalchemy import Column, Integer, String
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class User(db.Model):
+class User(Database.db.Model):
     __tablename__ = "users"
     user_id = Column(Integer, unique=True, primary_key=True)
-    user_name = Column(String, nullable=False)
-    email = Column(String, nullable=False, unique=True)
-    password = Column(String, nullable=False)
+    user_name = Column(String(64), nullable=False, unique=True, index=True)
+    email = Column(String(120), nullable=False, unique=True, index=True)
+    password = Column(String(20), nullable=False)
+
+    def set_password(self, password: str):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password: str):
+        return check_password_hash(self.password, password)
+
+    def __repr__(self):
+        return f"User(user_id:{self.user_id} | user_name:{self.user_name}"

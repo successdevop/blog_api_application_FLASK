@@ -1,5 +1,6 @@
 from flask import Flask
 from src.repo.database import Database
+from flask_jwt_extended import JWTManager
 
 def create_app():
     app = Flask(__name__)
@@ -7,13 +8,17 @@ def create_app():
 
     db = Database().db
     db.init_app(app)
+    jwt = JWTManager(app)
 
-    from src.controllers.user_controller import app_bp
-    app.register_blueprint(app_bp)
+    @app.route("/")
+    def homepage():
+        return "Welcome to Nkata Blog Application"
 
+    from src.controllers.user_controller import user_bp
+    app.register_blueprint(user_bp)
 
-    @app.cli.command("created_db")
-    def created_db():
+    @app.cli.command("create_db")
+    def create_db():
         db.create_all()
         print("Database created")
 

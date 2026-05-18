@@ -1,23 +1,69 @@
-from flask import jsonify, Blueprint
+from flask import jsonify, request
 from src.model.user import User
-from flask_jwt_extended import create_access_token
 
 
 class Auth:
-    auth_bp = Blueprint("main", __name__)
+    def __init__(self, database=None):
+        self._database = database
 
-    @auth_bp.route("/login", methods=['POST'])
-    def login(self, user_name: str, password: str):
+    def register(self):
         try:
-            user = User.query.filter_by(user_name).first()
+            data = request.get_json()
+            if not data:
+                return jsonify({"message":"Invalid or missing data"}), 401
 
-            if not user or not user.check_password(password=password):
-                return jsonify({"message":"Invalid user_name or password"}), 401
+            user_name = data.get("user_name")
+            email = data.get("email")
+            password = data.get("password")
 
-            access_token = create_access_token(identity=user_name)
+            if User.query.filter_by(email=email).first():
+                return jsonify({"message":"Email already exists"})
 
-            return jsonify({"message":"Login successful", "access_token":access_token, "token_type":"Bearer"}), 200
+            if not user_name or not email or not password:
+                return jsonify({"message":"Incomplete or missing credentials"})
+
+            new_user = User(user_name=user_name, email=email)
+            new_user.set_password(password=password)
+
+            self._database.session.add(new_user)
+            self._database.session.commit()
+
+            return jsonify({"message":f"Congratulations {user_name}, your registration is successful"}), 201
+
+        except Exception as e:
+            self._database.session.rollback()
+            return jsonify({"error":str(e)}), 500
+
+    def login(self):
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"message":"Invalid or missing data"}), 401
+
+            email = data.get("email")
+            password = data.get("password")
+
+            token, _ = User.authenticate_user(email=email, password=password)
+            if not token:
+                return jsonify({"message":"Invalid email or password"}), 401
+
+            return jsonify({"message":"Login successful", "access_token":token, "token_type":"Bearer"}), 200
         except Exception as e:
             return jsonify({"error":str(e)}), 500
+
+    def logOut(self):
+        data = request.get_json()
+        if not data:
+            return jsonify({"message":"Invalid or missing data"}), 401
+
+        email = data.get("email")
+        password = data.get("password")
+
+        _, user = User.authenticate_user(email=email, password=password)
+        if user:
+            user = None
+            return user
+
+
 
 

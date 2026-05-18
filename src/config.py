@@ -1,2 +1,3 @@
 class Config:
     SQLALCHEMY_DATABASE_URI = "sqlite:///fashion_biz.db"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -1,11 +1,10 @@
 from flask import request, jsonify
 from src.model.user import User
-from werkzeug.security import generate_password_hash
 
 
 class UserService:
     def __init__(self, database):
-        self.db = database
+        self._db = database
 
     def register(self):
         data = request.get_json()
@@ -22,16 +21,18 @@ class UserService:
             if user:
                 return jsonify({"message":"Email already exists"}), 404
 
-            hash_pwd = generate_password_hash(password)
+            if not user_name or not email or not password:
+                return jsonify({"message":"missing fields"}), 401
 
-            new_user = User(user_name=user_name, email=email, password=hash_pwd)
+            new_user = User(user_name=user_name, email=email)
+            new_user.set_password(password=password)
 
-            self.db.session.add(new_user)
-            self.db.session.commit()
+            self._db.session.add(new_user)
+            self._db.session.commit()
             return jsonify({"message": f"Congratulation {user_name}, your registration is successful"}), 201
 
         except Exception as e:
-            self.db.session.rollback()
+            self._db.session.rollback()
             return jsonify({"error": str(e)}), 500
 
 

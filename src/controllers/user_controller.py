@@ -1,11 +1,16 @@
-from src import create_app
+from flask import Blueprint
+from src.repo.database import Database
+from src.services.user_service import UserService
 
-app = create_app()
 
-@app.route("/")
+app_bp = Blueprint("main", __name__)
+db = Database().db
+service = UserService(database=db)
+
+@app_bp.route("/", methods=["GET"])
 def homepage():
     return "Welcome to Nkata Blog Application"
 
-@app.route("/register", methods=["POST"])
+@app_bp.route("/register", methods=["POST"])
 def register_user():
-    pass
+    service.register()

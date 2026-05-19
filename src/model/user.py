@@ -25,7 +25,7 @@ class User(Database.db.Model):
         user = cls.query.filter_by(email=email).first()
 
         if user and user.check_password(password=password):
-            access_token = create_access_token(identity=user.email)
+            access_token = create_access_token(identity=str(user.user_id))
             return access_token, user
         return None
 

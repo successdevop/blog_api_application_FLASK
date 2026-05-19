@@ -11,5 +11,5 @@ class Post(Database.db.Model):
     title = Column(String(140))
     body = Column(Text)
     created_at = Column(DateTime, index=True, default=datetime.utcnow())
-    author_id = Column(Integer, ForeignKey("users.user_id"))
+    author_id = Column(Integer, ForeignKey("users.email"))
     user = relationship("User", back_populates="posts")

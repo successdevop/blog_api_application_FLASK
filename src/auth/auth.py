@@ -50,7 +50,3 @@ class Auth:
             return jsonify({"message":"Login successful", "access_token":token, "token_type":"Bearer"}), 200
         except Exception as e:
             return jsonify({"error":str(e)}), 500
-
-
-
-

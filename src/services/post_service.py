@@ -10,6 +10,7 @@ class PostService:
 
     def create_post(self):
         data = request.get_json()
+
         if not data:
             return jsonify({"message":"Invalid or missing data"}), 401
 
@@ -18,9 +19,8 @@ class PostService:
 
             title = data.get("title")
             body = data.get("body")
-            author_id = data.get("author_id")
 
-            if not title or not body or not author_id:
+            if not title or not body:
                 return jsonify({"message":"Missing fields required"}), 401
 
             new_post = Post(title=title, body=body, author_id=user_id)
@@ -31,5 +31,12 @@ class PostService:
         except Exception as e:
             self._db.session.rollback()
             return jsonify({"error":str(e)})
+
+    def retrieve_post(self):
+        posts = Post.query.all()
+        if not posts:
+            return jsonify({"message":"No post made"})
+
+        # jsonify()
 
 

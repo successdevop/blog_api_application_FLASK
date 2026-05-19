@@ -1,6 +1,7 @@
 from flask import Flask
 from src.repo.database import Database
 from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
 
 def create_app():
     app = Flask(__name__)
@@ -9,6 +10,7 @@ def create_app():
     db = Database().db
     db.init_app(app)
     jwt = JWTManager(app)
+    migrate = Migrate(app, db)
 
     @app.route("/")
     def homepage():

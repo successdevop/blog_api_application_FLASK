@@ -12,7 +12,7 @@ class User(Database.db.Model):
     user_name = Column(String(64), nullable=False, unique=True, index=True)
     email = Column(String(120), nullable=False, unique=True, index=True)
     password = Column(String(20), nullable=False)
-    posts = relationship("Post", backref="author_id", lazy="dynamic")
+    posts = relationship("Post", back_populates="user", lazy="dynamic")
 
     def set_password(self, password: str):
         self.password = generate_password_hash(password)
@@ -25,7 +25,7 @@ class User(Database.db.Model):
         user = cls.query.filter_by(email=email).first()
 
         if user and user.check_password(password=password):
-            access_token = create_access_token(identity=user.user_id)
+            access_token = create_access_token(identity=user.email)
             return access_token, user
         return None
 

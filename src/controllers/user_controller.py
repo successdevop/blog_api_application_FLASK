@@ -2,7 +2,7 @@ from flask import Blueprint
 from src.repo.database import Database
 from src.auth.auth import Auth
 
-user_bp = Blueprint("main", __name__)
+user_bp = Blueprint("user_c", __name__)
 
 db = Database().db
 auth = Auth(database=db)

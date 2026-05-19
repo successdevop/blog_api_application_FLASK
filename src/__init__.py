@@ -15,7 +15,9 @@ def create_app():
         return "Welcome to Nkata Blog Application"
 
     from src.controllers.user_controller import user_bp
+    from src.controllers.post_controller import post_bp
     app.register_blueprint(user_bp)
+    app.register_blueprint(post_bp)
 
     @app.cli.command("create_db")
     def create_db():

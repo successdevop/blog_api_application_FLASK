@@ -1,3 +1,5 @@
+from sqlalchemy.orm import relationship
+
 from src.repo.database import Database
 from sqlalchemy import Column, Integer, String
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,6 +12,7 @@ class User(Database.db.Model):
     user_name = Column(String(64), nullable=False, unique=True, index=True)
     email = Column(String(120), nullable=False, unique=True, index=True)
     password = Column(String(20), nullable=False)
+    posts = relationship("Post", backref="author_id", lazy="dynamic")
 
     def set_password(self, password: str):
         self.password = generate_password_hash(password)
@@ -22,7 +25,7 @@ class User(Database.db.Model):
         user = cls.query.filter_by(email=email).first()
 
         if user and user.check_password(password=password):
-            access_token = create_access_token(identity=email)
+            access_token = create_access_token(identity=user.user_id)
             return access_token, user
         return None
 

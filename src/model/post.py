@@ -10,6 +10,6 @@ class Post(Database.db.Model):
     post_id = Column(Integer, primary_key=True)
     title = Column(String(140))
     body = Column(Text)
-    created_at = Column(DateTime, index=True, default=datetime.utcnow())
-    author_id = Column(Integer, ForeignKey("users.email"))
+    created_at = Column(DateTime, index=True, default=datetime.utcnow)
+    author_id = Column(Integer, ForeignKey("users.user_id"))
     user = relationship("User", back_populates="posts")

@@ -1,8 +1,7 @@
 from flask import request, jsonify
 from src.model.post import Post
 from flask_jwt_extended import get_jwt_identity
-
-from src.schema.post import posts_schema
+from src.schema.post import posts_schema, post_schema
 
 
 class PostService:
@@ -32,13 +31,50 @@ class PostService:
             return jsonify({"message":"post created successfully"}), 201
         except Exception as e:
             self._db.session.rollback()
-            return jsonify({"error":str(e)})
+            return jsonify({"error":str(e)}), 500
 
-    def retrieve_post(self):
+    @staticmethod
+    def retrieve_posts():
         posts = Post.query.all()
+
         if not posts:
-            return jsonify({"message":"No post made"})
+            return jsonify({"message":"No post made"}), 404
 
         return jsonify(posts_schema.dump(posts)), 200
+
+    @staticmethod
+    def get_post(post_id: int):
+        post = Post.query.get(post_id)
+        if not post:
+            return jsonify({"message":f"Post with id {post_id} not found"}), 404
+
+        return jsonify(post_schema.dump(post)), 200
+
+    def edit_post(self, post_id: int):
+        post = Post.query.filter_by(post_id=post_id).first()
+        if not post:
+            return jsonify({"message":"post not found"}), 404
+
+        data = request.get_json()
+
+        if "title" in data:
+            post.title = data["title"]
+        if "body" in data:
+            post.body = data["body"]
+
+        self._db.session.commit()
+
+        return jsonify({"message":"post updated or edited"}), 200
+
+    def delete_post(self, post_id: int):
+        post = Post.query.filter_by(post_id=post_id).first()
+        if not post:
+            return jsonify({"message":"post not found"}), 404
+
+        self._db.session.delete(post)
+        self._db.session.commit()
+        return jsonify({"message":"post deleted successfully"}), 200
+
+
 
 

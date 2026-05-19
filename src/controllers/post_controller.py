@@ -9,8 +9,28 @@ post_service = PostService(database=db)
 
 post_bp = Blueprint("post_c", __name__)
 
-@post_bp.route("/post", methods=["POST"])
+@post_bp.route("/posts", methods=["POST"])
 @jwt_required()
 def create_post():
     return post_service.create_post()
+
+
+@post_bp.route("/posts", methods=["GET"])
+def retrieve_all_post():
+    return post_service.retrieve_posts()
+
+
+@post_bp.route("/posts/<int:post_id>", methods=["GET"])
+def get_post(post_id: int):
+    return post_service.get_post(post_id)
+
+
+@post_bp.route("/posts/<int:post_id>", methods=["PATCH"])
+def updated_post(post_id: int):
+    return post_service.edit_post(post_id)
+
+
+@post_bp.route("/posts/<int:post_id>", methods=["DELETE"])
+def delete_post(post_id: int):
+    return post_service.delete_post(post_id)
 

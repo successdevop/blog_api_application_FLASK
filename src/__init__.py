@@ -26,4 +26,9 @@ def create_app():
         db.create_all()
         print("Database created")
 
+    # @app.cli.command("drop_db")
+    # def drop_db():
+    #     db.drop_all()
+    #     print("Database dropped")
+
     return app

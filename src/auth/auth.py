@@ -51,19 +51,6 @@ class Auth:
         except Exception as e:
             return jsonify({"error":str(e)}), 500
 
-    def logOut(self):
-        data = request.get_json()
-        if not data:
-            return jsonify({"message":"Invalid or missing data"}), 401
-
-        email = data.get("email")
-        password = data.get("password")
-
-        _, user = User.authenticate_user(email=email, password=password)
-        if user:
-            user = None
-            return user
-
 
 
 

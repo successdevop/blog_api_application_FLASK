@@ -1,9 +1,9 @@
 from sqlalchemy.orm import relationship
-from src.repo.database import Database
+from src.repo.database import db
 from sqlalchemy import Column, String
 
 
-class User(Database.db.Model):
+class User(db.Model):
     __tablename__ = "users"
     user_id = Column(String, primary_key=True)
     user_name = Column(String(64), nullable=False, unique=True, index=True)

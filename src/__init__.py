@@ -1,5 +1,5 @@
 from flask import Flask
-from src.repo.database import Database
+from src.repo.database import db
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 
@@ -7,7 +7,6 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object("src.config.Config")
 
-    db = Database().db
     db.init_app(app)
     jwt = JWTManager(app)
     migrate = Migrate(app, db)
@@ -29,9 +28,9 @@ def create_app():
         db.create_all()
         print("Database created")
 
-    # @app.cli.command("drop_db")
-    # def drop_db():
-    #     db.drop_all()
-    #     print("Database dropped")
+    @app.cli.command("drop_db")
+    def drop_db():
+        db.drop_all()
+        print("Database dropped")
 
     return app

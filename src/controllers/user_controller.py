@@ -14,6 +14,6 @@ def register_user():
 def login():
     return auth.login()
 
-@user_bp.route("/posts", methods=["POST"])
+@user_bp.route("/auth", methods=["POST"])
 def forgot_password():
     return auth.forgot_password()

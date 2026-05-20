@@ -48,12 +48,12 @@ class Auth:
         try:
             token, _ = generate_user_token(User, email=email, password=password)
             if not token:
-                return status_msg(f"Invalid email or password")
+                return status_msg("Invalid email or password")
 
             message = {'message':'Login success', 'access_token':f'{token}', 'token_type':'Bearer'}
-            return status_msg(f"{message}", 200)
+            return status_msg(message, 200)
         except Exception as e:
-            return status_msg(f"Login failed: {str(e)}")
+            return status_msg({"Login failed":str(e)})
 
     def forgot_password(self):
         data = request.get_json()

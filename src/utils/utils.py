@@ -9,8 +9,8 @@ def server_error(error):
     return jsonify({"error": str(error)}), 500
 
 
-def status_msg(message: str, status_code: int = 401):
-    return jsonify({"message":message}), status_code
+def status_msg(message, status_code: int = 401):
+    return jsonify(message), status_code
 
 
 def set_password(obj: User, password: str):

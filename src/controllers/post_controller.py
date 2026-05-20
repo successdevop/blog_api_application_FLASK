@@ -1,10 +1,9 @@
 from flask import Blueprint
 from src.services.post_service import PostService
-from src.repo.database import Database
+from src.repo.database import db
 from flask_jwt_extended import jwt_required
 
 
-db = Database().db
 post_service = PostService(database=db)
 
 post_bp = Blueprint("post_c", __name__)
@@ -42,5 +41,5 @@ def add_comment(post_id: int):
 
 
 @post_bp.route("/posts/<int:post_id>/comments", methods=["GET"])
-def get_comments(post_id: int):
+def get_all_comments(post_id: int):
     return post_service.get_comments(post_id=post_id)

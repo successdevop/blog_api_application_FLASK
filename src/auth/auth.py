@@ -1,6 +1,6 @@
-from flask import jsonify, request
+from flask import request
 from src.model.user import User
-from src.utils.utils import server_error, status_msg
+from src.utils.utils import server_error, status_msg, set_password, generate_user_token
 
 
 class Auth:
@@ -24,7 +24,7 @@ class Auth:
                 status_msg("Incomplete or missing credentials")
 
             new_user = User(user_name=user_name, email=email)
-            new_user.set_password(password=password)
+            set_password(new_user, password)
 
             self._database.session.add(new_user)
             self._database.session.commit()
@@ -45,7 +45,7 @@ class Auth:
             email = data.get("email")
             password = data.get("password")
 
-            token, _ = User.authenticate_user(email=email, password=password)
+            token, _ = generate_user_token(User, email=email, password=password)
             if not token:
                 status_msg("Invalid email or password")
 

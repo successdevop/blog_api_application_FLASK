@@ -34,3 +34,13 @@ def updated_post(post_id: int):
 def delete_post(post_id: int):
     return post_service.delete_post(post_id)
 
+
+@post_bp.route("/posts/<int:post_id>/comments", methods=["POST"])
+@jwt_required()
+def add_comment(post_id: int):
+    return post_service.add_comment(post_id=post_id)
+
+
+@post_bp.route("/posts/<int:post_id>/comments", methods=["GET"])
+def get_comments(post_id: int):
+    return post_service.get_comments(post_id=post_id)

@@ -1,8 +1,11 @@
 from flask import request, jsonify
 
+from src.model import Post
 from src.model.comments import Comments
 from src.model.post import Post
 from flask_jwt_extended import get_jwt_identity
+
+from src.schema.comment import comments_schema
 from src.schema.post import posts_schema, post_schema
 
 
@@ -93,6 +96,18 @@ class PostService:
         self._db.session.commit()
 
         return jsonify({"message":"comment added successfully"}), 200
+
+    def get_comments(self, post_id: int):
+        post = Post.query.filter_by(post_id=post_id).first()
+        if not post:
+            return jsonify({"message":"post not found"}), 404
+
+        comments = post.comments.all()
+        if not comments:
+            return jsonify({"message":"no comments on this post"}), 404
+
+        return jsonify(comments_schema.dump(comments)), 200
+
 
 
 

@@ -12,12 +12,15 @@ def create_app():
     jwt = JWTManager(app)
     migrate = Migrate(app, db)
 
+    from src.model import User, Post, Comments
+
     @app.route("/")
     def homepage():
         return "Welcome to Nkata Blog Application"
 
     from src.controllers.user_controller import user_bp
     from src.controllers.post_controller import post_bp
+
     app.register_blueprint(user_bp)
     app.register_blueprint(post_bp)
 

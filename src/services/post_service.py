@@ -1,4 +1,6 @@
 from flask import request, jsonify
+
+from src.model.comments import Comments
 from src.model.post import Post
 from flask_jwt_extended import get_jwt_identity
 from src.schema.post import posts_schema, post_schema
@@ -74,6 +76,27 @@ class PostService:
         self._db.session.delete(post)
         self._db.session.commit()
         return jsonify({"message":"post deleted successfully"}), 200
+
+    def add_comment(self, post_id: int):
+        user_id = get_jwt_identity()
+        post = Post.query.filter_by(post_id=post_id).first()
+        if not post:
+            return jsonify({"message":"post not found"}), 404
+
+        data = request.get_json()
+        if not data:
+            return jsonify({"message":"Invalid or missing data"}), 401
+
+        body = data.get("body")
+        new_comment = Comments(body=body, author_id=user_id, post_id=post_id)
+        self._db.session.add(new_comment)
+        self._db.session.commit()
+
+        return jsonify({"message":"comment added successfully"}), 200
+
+
+
+
 
 
 

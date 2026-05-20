@@ -13,3 +13,7 @@ def register_user():
 @user_bp.route("/login", methods=["POST"])
 def login():
     return auth.login()
+
+@user_bp.route("/posts", methods=["POST"])
+def forgot_password():
+    return auth.forgot_password()

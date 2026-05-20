@@ -50,10 +50,17 @@ class Auth:
 
         status_msg(f"Login successful, access_token:{token}, token_type:Bearer", 200)
 
-    def forgot_password(self, email: str, password: str):
+    def forgot_password(self):
+        data = request.get_json()
+        if not data:
+            status_msg("Invalid or missing data")
+
+        email = data.get("email")
+        password = data.get("password")
+
         user = User.query.filter_by(email=email).first()
         if not user:
             status_msg("user not found", 404)
 
         set_password(user, password=password)
-        return user
+        status_msg("Password reset successful", 200)

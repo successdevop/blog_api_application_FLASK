@@ -101,6 +101,7 @@ class PostService:
 
     def add_comment(self, post_id: int):
         user_id = get_jwt_identity()
+
         post = Post.query.filter_by(post_id=post_id).first()
         if not post:
             status_msg("post not found", 404)
@@ -135,6 +136,7 @@ class PostService:
 
     def edit_comment(self, post_id: str, comment_id: str):
         current_user_id = get_jwt_identity()
+
         comment = Comments.query.filter_by(post_id=post_id, comment_id=comment_id).first()
         if not comment:
             status_msg("comment not found", 404)
@@ -169,6 +171,7 @@ class PostService:
 
         try:
             self._db.session.delete(comment)
+            self._db.session.commit()
             status_msg("comment deleted successfuly", 200)
         except Exception as e:
             self._db.session.rollback()

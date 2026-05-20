@@ -25,11 +25,13 @@ def get_post(post_id: int):
 
 
 @post_bp.route("/posts/<int:post_id>", methods=["PATCH"])
+@jwt_required()
 def updated_post(post_id: int):
     return post_service.edit_post(post_id)
 
 
 @post_bp.route("/posts/<int:post_id>", methods=["DELETE"])
+@jwt_required()
 def delete_post(post_id: int):
     return post_service.delete_post(post_id)
 
@@ -43,3 +45,13 @@ def add_comment(post_id: int):
 @post_bp.route("/posts/<int:post_id>/comments", methods=["GET"])
 def get_all_comments(post_id: int):
     return post_service.get_comments(post_id=post_id)
+
+
+@post_bp.route("/posts/<int:post_id>/comments/<int:comment_id>", methods=["PATCH"])
+def edit_comment(post_id: str, comment_id: str):
+    return post_service.edit_comment(post_id, comment_id)
+
+
+@post_bp.route("/posts/<int:post_id>/comments/<int:comment_id>", methods=["DELETE"])
+def delete_comment(post_id: str, comment_id: str):
+    return post_service.delete_comment(post_id, comment_id)

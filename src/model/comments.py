@@ -1,3 +1,5 @@
+import secrets
+
 from sqlalchemy.orm import relationship
 
 from src.repo.database import db
@@ -7,7 +9,7 @@ from datetime import datetime
 
 class Comments(db.Model):
     __tablename__ = "comments"
-    comment_id = Column(String, primary_key=True)
+    comment_id = Column(String(20), primary_key=True, default=lambda : secrets.token_hex(10))
     body = Column(String, nullable=False)
     timestamp = Column(DateTime, default=datetime.now().strftime("%Y-%m-%d %H-%M-%S"))
     author_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)

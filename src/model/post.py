@@ -1,3 +1,4 @@
+import secrets
 from sqlalchemy.orm import relationship
 
 from src.repo.database import db
@@ -7,7 +8,7 @@ from datetime import datetime
 
 class Post(db.Model):
     __tablename__ = "posts"
-    post_id = Column(String, primary_key=True)
+    post_id = Column(String(20), primary_key=True, default=lambda : secrets.token_hex(10))
     title = Column(String(140), nullable=False)
     body = Column(Text, nullable=False)
     created_at = Column(DateTime, index=True, default=datetime.now().strftime("%Y-%m-%d %H-%M-%S"))

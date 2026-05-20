@@ -1,3 +1,4 @@
+import secrets
 from sqlalchemy.orm import relationship
 from src.repo.database import db
 from sqlalchemy import Column, String
@@ -5,7 +6,7 @@ from sqlalchemy import Column, String
 
 class User(db.Model):
     __tablename__ = "users"
-    user_id = Column(String, primary_key=True)
+    user_id = Column(String(20), primary_key=True, default=lambda : secrets.token_hex(10))
     user_name = Column(String(64), nullable=False, unique=True, index=True)
     email = Column(String(120), nullable=False, unique=True, index=True)
     password = Column(String(225), nullable=False)

@@ -44,11 +44,13 @@ class Auth:
         email = data.get("email")
         password = data.get("password")
 
-        token, _ = generate_user_token(User, email=email, password=password)
-        if not token:
-            status_msg("Invalid email or password")
-
-        status_msg(f"Login successful, access_token:{token}, token_type:Bearer", 200)
+        try:
+            token, _ = generate_user_token(User, email=email, password=password)
+        except Exception as e:
+            status_msg(f"Invalid email or password | {e}")
+        else:
+        # if not token:
+            status_msg(f"Login successful, access_token:{token}, token_type:Bearer", 200)
 
     def forgot_password(self):
         data = request.get_json()

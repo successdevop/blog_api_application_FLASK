@@ -13,6 +13,7 @@ class User(Database.db.Model):
     email = Column(String(120), nullable=False, unique=True, index=True)
     password = Column(String(20), nullable=False)
     posts = relationship("Post", back_populates="user", lazy="dynamic")
+    comments = relationship("Comments", back_populates="user", lazy="dynamic")
 
     def set_password(self, password: str):
         self.password = generate_password_hash(password)

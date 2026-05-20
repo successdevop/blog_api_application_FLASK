@@ -20,7 +20,6 @@ def set_password(obj: User, password: str):
 def check_password(obj: User, password: str):
     return check_password_hash(obj.password, password=password)
 
-
 def generate_user_token(obj: Type[User], email: str, password: str):
     user = obj.query.filter_by(email=email).first()
 

@@ -1,9 +1,9 @@
 from flask import request
-from src.utils.utils import status_msg, server_error
+from flask_jwt_extended import get_jwt_identity
 
+from src.utils.utils import status_msg, server_error
 from src.model.comments import Comments
 from src.model.post import Post
-from flask_jwt_extended import get_jwt_identity
 
 from src.schema.comment import comments_schema
 from src.schema.post import posts_schema, post_schema
@@ -60,6 +60,10 @@ class PostService:
         if not post:
             status_msg("post not found", 404)
 
+        current_user_id = get_jwt_identity()
+        if current_user_id != post.author_id:
+            status_msg("Permission denied", 403)
+
         data = request.get_json()
 
         if "title" in data:
@@ -80,6 +84,10 @@ class PostService:
         post = Post.query.filter_by(post_id=post_id).first()
         if not post:
             status_msg("post not found", 404)
+
+        current_user_id = get_jwt_identity()
+        if current_user_id != post.author_id:
+            status_msg("Permission denied", 403)
 
         try:
             self._db.session.delete(post)
@@ -131,6 +139,9 @@ class PostService:
         if not comment:
             status_msg("comment not found", 404)
 
+        if current_user_id != comment.author_id:
+            status_msg("Permission denied", 403)
+
         data = request.get_json()
         if not data:
             status_msg("Invalid or missing data")
@@ -151,6 +162,10 @@ class PostService:
         comment = Comments.query.filter_by(post_id=post_id, comment_id=comment_id).first()
         if not comment:
             status_msg("comment not found", 404)
+
+        current_user_id = get_jwt_identity()
+        if current_user_id != comment.author_id:
+            status_msg("Permission denied", 403)
 
         try:
             self._db.session.delete(comment)

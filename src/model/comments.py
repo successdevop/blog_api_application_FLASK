@@ -13,3 +13,4 @@ class Comments(Database.db.Model):
     author_id = Column(Integer, ForeignKey("users.user_id"))
     post_id = Column(Integer, ForeignKey("posts.post_id"))
     user = relationship("User", back_populates="comments")
+    post = relationship("Post", back_populates="comments")

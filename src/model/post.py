@@ -13,3 +13,4 @@ class Post(Database.db.Model):
     created_at = Column(DateTime, index=True, default=datetime.utcnow)
     author_id = Column(Integer, ForeignKey("users.user_id"))
     user = relationship("User", back_populates="posts")
+    comments = relationship("Comments", back_populates="post", lazy="dynamic", cascade="all, delete-orphan")

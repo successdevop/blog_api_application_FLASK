@@ -10,17 +10,17 @@ class Auth:
     def register(self):
         data = request.get_json()
         if not data:
-            status_msg("Invalid or missing data")
+            return status_msg("Invalid or missing data")
 
         user_name = data.get("user_name")
         email = data.get("email")
         password = data.get("password")
 
-        if User.query.filter_by(email=email).first():
-            status_msg("Email already exists", status_code=409)
-
         if not user_name or not email or not password:
-            status_msg("Incomplete or missing credentials")
+            return status_msg("Incomplete or missing credentials")
+
+        if User.query.filter_by(email=email).first():
+            return status_msg("Email already exists", status_code=409)
 
         new_user = User(user_name=user_name, email=email)
         set_password(new_user, password)
@@ -28,41 +28,52 @@ class Auth:
         try:
             self._database.session.add(new_user)
             self._database.session.commit()
-            status_msg(f"Congratulations {user_name}, your registration is successful", status_code=201)
+            return status_msg(f"Congratulations {user_name}, your registration is successful", status_code=201)
 
         except Exception as e:
             self._database.session.rollback()
-            server_error(error=e)
-        finally:
-            self._database.session.close()
+            return server_error(error=e)
 
     def login(self):
         data = request.get_json()
         if not data:
-            status_msg("Invalid or missing data")
+            return status_msg("Invalid or missing data")
 
         email = data.get("email")
         password = data.get("password")
 
+        if not email or not password:
+            return status_msg("Email and password required", 400)
+
         try:
             token, _ = generate_user_token(User, email=email, password=password)
+            if not token:
+                return status_msg(f"Invalid email or password")
+
+            message = {'message':'Login success', 'access_token':f'{token}', 'token_type':'Bearer'}
+            return status_msg(f"{message}", 200)
         except Exception as e:
-            status_msg(f"Invalid email or password | {e}")
-        else:
-        # if not token:
-            status_msg(f"Login successful, access_token:{token}, token_type:Bearer", 200)
+            return status_msg(f"Login failed: {str(e)}")
 
     def forgot_password(self):
         data = request.get_json()
         if not data:
-            status_msg("Invalid or missing data")
+            return status_msg("Invalid or missing data")
 
         email = data.get("email")
         password = data.get("password")
 
+        if not email or not password:
+            return status_msg("Email and password required", 400)
+
         user = User.query.filter_by(email=email).first()
         if not user:
-            status_msg("user not found", 404)
+            return status_msg("user not found", 404)
 
-        set_password(user, password=password)
-        status_msg("Password reset successful", 200)
+        try:
+            set_password(user, password=password)
+            self._database.session.commit()
+            return status_msg("Password reset successful", 200)
+        except Exception as e:
+            self._database.session.rollback()
+            return server_error(error=e)

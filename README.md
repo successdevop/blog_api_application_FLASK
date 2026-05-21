@@ -1,6 +1,4 @@
 # blog_api_application_FLASK
-# Nkata Blog Application
-
 A RESTful blog API built with Flask, featuring user authentication, post management, and comment functionality.
 
 ## Tech Stack

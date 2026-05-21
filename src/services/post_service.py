@@ -53,12 +53,13 @@ class PostService:
             return status_msg(f"Post with ID {post_id} not found", 404)
         return status_msg(post_schema.dump(post), 200)
 
-    def edit_post(self, post_id: int):
+    def edit_post(self, post_id: str):
         post = Post.query.filter_by(post_id=post_id).first()
         if not post:
             return status_msg("Post not found", 404)
 
         current_user_id = get_jwt_identity()
+
         if current_user_id != post.author_id:
             return status_msg("Permission denied", 403)
 
@@ -76,12 +77,13 @@ class PostService:
             self._db.session.rollback()
             return server_error(error=e)
 
-    def delete_post(self, post_id: int):
+    def delete_post(self, post_id: str):
         post = Post.query.filter_by(post_id=post_id).first()
         if not post:
             return status_msg("Post not found", 404)
 
         current_user_id = get_jwt_identity()
+
         if current_user_id != post.author_id:
             return status_msg("Permission denied", 403)
 
@@ -115,7 +117,7 @@ class PostService:
             self._db.session.rollback()
             return server_error(error=e)
 
-    def get_comments(self, post_id: int):
+    def get_comments(self, post_id: str):
         post = Post.query.filter_by(post_id=post_id).first()
         if not post:
             return status_msg("Post not found", 404)
@@ -124,7 +126,7 @@ class PostService:
         if not comments:
             return status_msg("no comments on this post", 404)
 
-        return status_msg(f"{comments_schema.dump(comments)}", 200)
+        return status_msg(comments_schema.dump(comments), 200)
 
     def edit_comment(self, post_id: str, comment_id: str):
         current_user_id = get_jwt_identity()
@@ -156,6 +158,7 @@ class PostService:
             return status_msg("comment not found", 404)
 
         current_user_id = get_jwt_identity()
+        
         if current_user_id != comment.author_id:
             return status_msg("Permission denied", 403)
 

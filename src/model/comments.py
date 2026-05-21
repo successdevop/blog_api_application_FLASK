@@ -10,7 +10,7 @@ from datetime import datetime
 class Comments(db.Model):
     __tablename__ = "comments"
     comment_id = Column(String(20), primary_key=True, default=lambda : secrets.token_hex(10))
-    body = Column(String, nullable=False)
+    body = Column(String(255), nullable=False)
     timestamp = Column(DateTime, default=datetime.now)
     author_id = Column(String(20), ForeignKey("users.user_id"), nullable=False)
     post_id = Column(String(20), ForeignKey("posts.post_id"), nullable=False)
